@@ -25,12 +25,12 @@
   --foreground: #0f172a; /* Slate-900 para leitura confortável */
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 /* Reset Básico */
 body {
