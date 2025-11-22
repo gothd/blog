@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@/config/categories';
+import { CATEGORIES, CategoryId } from '@/config/categories';
 import { PostMetadata } from '@/lib/posts';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   // Busca a config baseada no slug que vem do frontmatter
-  const categoryConfig = CATEGORIES[post.category];
+  const categoryConfig = CATEGORIES[post.category as CategoryId];
 
   // Fallback de segurança
   const badgeClass = categoryConfig
