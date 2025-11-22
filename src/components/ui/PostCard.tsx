@@ -1,3 +1,4 @@
+import { CATEGORIES } from '@/config/categories';
 import { PostMetadata } from '@/lib/posts';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,17 +7,14 @@ interface PostCardProps {
   post: PostMetadata;
 }
 
-const CATEGORY_STYLES = {
-  tecnologia: 'bg-hub-tech text-white',
-  saude: 'bg-hub-health text-white',
-  economia: 'bg-hub-economy text-white',
-  sociedade: 'bg-hub-society text-white',
-  cultura: 'bg-hub-culture text-white',
-};
-
 export function PostCard({ post }: PostCardProps) {
-  const categoryClass =
-    CATEGORY_STYLES[post.category] || 'bg-hub-gray text-white';
+  // Busca a config baseada no slug que vem do frontmatter
+  const categoryConfig = CATEGORIES[post.category];
+
+  // Fallback de segurança
+  const badgeClass = categoryConfig
+    ? `${categoryConfig.colors.bg} text-white`
+    : 'bg-hub-gray text-white';
 
   return (
     <article
@@ -43,9 +41,9 @@ export function PostCard({ post }: PostCardProps) {
 
         {/* Badge de Categoria */}
         <span
-          className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider shadow-sm ${categoryClass}`}
+          className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider shadow-sm ${badgeClass}`}
         >
-          {post.category}
+          {categoryConfig?.label || post.category}
         </span>
       </div>
 

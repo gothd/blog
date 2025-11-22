@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { glob } from 'glob';
 import matter from 'gray-matter';
 import path from 'path';
 
@@ -7,16 +8,14 @@ export interface PostMetadata {
   description: string;
   excerpt: string;
   date: string;
-  category: 'tecnologia' | 'saude' | 'economia' | 'sociedade' | 'cultura';
+  updatedAt?: string; // NOVO CAMPO
+  category: string; // Agora inferido da pasta, mas mantemos no tipo
   image?: string;
-  affiliateLink?: string; // Link para COMPRAR
   price?: string;
-
-  // NOVOS CAMPOS PARA PARCEIROS
-  affiliationLink?: string; // Link para SE AFILIAR (Revender)
-  commissionRate?: string; // Ex: "50%"
-  affiliationTitle?: string; // Título personalizado do box de afiliação
-
+  affiliateLink?: string;
+  affiliationLink?: string;
+  commissionRate?: string;
+  affiliationTitle?: string;
   slug: string;
 }
 
@@ -27,84 +26,95 @@ export interface Post {
 
 const postsDirectory = path.join(process.cwd(), 'src/content');
 
-if (!fs.existsSync(postsDirectory)) {
-  fs.mkdirSync(postsDirectory, { recursive: true });
-}
-
-// Função auxiliar para limpar Markdown para texto puro
+// Helpers de Limpeza de Texto (Strip Markdown) - Mantidos iguais
 function stripMarkdown(markdown: string): string {
   if (!markdown) return '';
   return markdown
-    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove imagens completas
-    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links, mantém texto
-    .replace(/(\*\*|__)(.*?)\1/g, '$2') // Remove negrito (**texto**)
-    .replace(/(\*|_)(.*?)\1/g, '$2') // Remove itálico (*texto*)
-    .replace(/^#+\s+/gm, '') // Remove hashtags de títulos
-    .replace(/`{3}[\s\S]*?`{3}/g, '') // Remove blocos de código
-    .replace(/`(.+?)`/g, '$1') // Remove inline code
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/^#+\s+/gm, '')
+    .replace(/`{3}[\s\S]*?`{3}/g, '')
+    .replace(/`(.+?)`/g, '$1')
     .trim();
 }
 
-export function getPostBySlug(slug: string): Post | null {
-  try {
-    const fullPath = path.join(postsDirectory, `${slug}.mdx`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-    const { data, content } = matter(fileContents);
-
-    return {
-      metadata: {
-        ...data,
-        slug,
-        // Apenas repassa o description para o single post, o excerpt não é crítico aqui
-        excerpt: data.description,
-      } as PostMetadata,
-      content,
-    };
-  } catch {
-    return null;
-  }
+function getExcerpt(content: string, description: string): string {
+  const rawParagraphs = content.split(/\r?\n\s*\r?\n/);
+  const firstContentParagraph =
+    rawParagraphs.find((p) => {
+      const trimmed = p.trim();
+      if (!trimmed) return false;
+      if (trimmed.startsWith('#')) return false;
+      if (trimmed.startsWith('![')) return false;
+      if (trimmed.startsWith('<')) return false;
+      if (trimmed.startsWith('import') || trimmed.startsWith('export'))
+        return false;
+      return true;
+    }) || '';
+  return stripMarkdown(firstContentParagraph) || description;
 }
 
-export function getAllPosts(): PostMetadata[] {
-  const fileNames = fs.readdirSync(postsDirectory);
+// ==========================================================
+// NOVA LÓGICA DE BUSCA
+// ==========================================================
 
-  const allPostsData = fileNames
-    .filter((fileName) => fileName.endsWith('.mdx'))
-    .map((fileName) => {
-      const slug = fileName.replace(/\.mdx$/, '');
-      const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const { data, content } = matter(fileContents);
+export function getPostBySlug(slug: string): Post | null {
+  // Como agora está em subpastas, não sabemos o caminho exato só pelo slug.
+  // Precisamos encontrar o arquivo.
+  const files = glob.sync(`${postsDirectory}/**/*.mdx`);
+  const postPath = files.find((file) => path.basename(file, '.mdx') === slug);
 
-      // FIX: Regex robusto para detectar parágrafos em Windows (CRLF) e Unix (LF)
-      // Divide onde houver uma linha em branco (duas quebras de linha consecutivas)
-      const rawParagraphs = content.split(/\r?\n\s*\r?\n/);
+  if (!postPath) return null;
 
-      // Encontra o primeiro parágrafo de TEXTO real
-      const firstContentParagraph =
-        rawParagraphs.find((p) => {
-          const trimmed = p.trim();
+  const fileContents = fs.readFileSync(postPath, 'utf8');
+  const { data, content } = matter(fileContents);
 
-          if (!trimmed) return false;
-          if (trimmed.startsWith('#')) return false; // Títulos
-          if (trimmed.startsWith('![')) return false; // Imagens
-          if (trimmed.startsWith('<')) return false; // Componentes JSX
-          if (trimmed.startsWith('import')) return false; // Imports MDX
-          if (trimmed.startsWith('export')) return false; // Exports MDX
+  // Infere categoria pela pasta pai se não estiver no frontmatter
+  const categoryFromFolder = path.basename(path.dirname(postPath));
 
-          return true;
-        }) || '';
+  return {
+    metadata: {
+      ...data,
+      category: data.category || categoryFromFolder, // Prioridade ao frontmatter, fallback pasta
+      slug,
+      excerpt: data.description, // No single post usamos description
+    } as PostMetadata,
+    content,
+  };
+}
 
-      const excerpt = stripMarkdown(firstContentParagraph) || data.description;
+// Agora aceita categoria opcional para filtrar na fonte
+export function getAllPosts(category?: string): PostMetadata[] {
+  // Se tiver categoria, busca só na pasta específica. Se não, busca em tudo.
+  const pattern = category
+    ? `${postsDirectory}/${category}/*.mdx`
+    : `${postsDirectory}/**/*.mdx`;
 
-      return {
-        slug,
-        ...data,
-        excerpt,
-      } as PostMetadata;
-    });
+  const files = glob.sync(pattern);
 
-  // Ordena por data (mais recente primeiro)
-  return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
+  const allPostsData = files.map((filePath) => {
+    const slug = path.basename(filePath, '.mdx');
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data, content } = matter(fileContents);
+
+    // Pega categoria da pasta se necessário
+    const categoryFromFolder = path.basename(path.dirname(filePath));
+    const finalCategory = data.category || categoryFromFolder;
+
+    return {
+      slug,
+      ...data,
+      category: finalCategory,
+      excerpt: getExcerpt(content, data.description),
+    } as PostMetadata;
+  });
+
+  // Ordena por updatedAt (se houver) ou date
+  return allPostsData.sort((a, b) => {
+    const dateA = a.updatedAt || a.date;
+    const dateB = b.updatedAt || b.date;
+    return dateA < dateB ? 1 : -1;
+  });
 }

@@ -1,15 +1,8 @@
 'use client';
 
+import { CATEGORY_LIST } from '@/config/categories';
 import Link from 'next/link';
 import { useState } from 'react';
-
-const NAV_ITEMS = [
-  { label: 'Saúde', href: '/saude', color: 'hover:text-hub-health' },
-  { label: 'Tecnologia', href: '/tecnologia', color: 'hover:text-hub-tech' },
-  { label: 'Economia', href: '/economia', color: 'hover:text-hub-economy' },
-  { label: 'Sociedade', href: '/sociedade', color: 'hover:text-hub-society' },
-  { label: 'Cultura', href: '/cultura', color: 'hover:text-hub-culture' },
-];
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,14 +25,14 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:gap-8">
-          {NAV_ITEMS.map((item) => (
+          {CATEGORY_LIST.map((category) => (
             <Link
-              key={item.href}
-              href={item.href}
-              // h-12 = 3rem. Altura consistente para os links desktop
-              className={`flex h-12 items-center text-base font-medium text-hub-gray transition-colors focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech ${item.color}`}
+              key={category.slug}
+              href={`/${category.slug}`}
+              // Agora a cor vem da config central
+              className={`flex h-12 items-center text-base font-medium text-hub-gray transition-colors focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech hover:${category.colors.text}`}
             >
-              {item.label}
+              {category.label}
             </Link>
           ))}
         </nav>
@@ -90,16 +83,16 @@ export function Header() {
         >
           {/* gap-2 = 0.5rem. Espaçamento vertical leve entre os itens */}
           <ul className="flex flex-col gap-2">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.href}>
+            {CATEGORY_LIST.map((category) => (
+              <li key={category.slug}>
                 <Link
-                  href={item.href}
+                  href={`/${category.slug}`}
                   onClick={() => setIsMenuOpen(false)}
                   // min-h-12 = 3rem. Essencial para lista vertical em mobile.
                   // Evita "fat finger error" (tocar no link errado).
-                  className={`flex min-h-12 items-center rounded-md px-4 text-lg font-medium text-hub-gray transition-colors active:bg-hub-light ${item.color}`}
+                  className={`flex min-h-12 items-center rounded-md px-4 text-lg font-medium text-hub-gray transition-colors active:bg-hub-light hover:${category.colors.text}`}
                 >
-                  {item.label}
+                  {category.label}
                 </Link>
               </li>
             ))}
