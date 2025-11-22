@@ -30,7 +30,7 @@ export function Header() {
               key={category.slug}
               href={`/${category.slug}`}
               // Agora a cor vem da config central
-              className={`flex h-12 items-center text-base font-medium text-hub-gray transition-colors focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech hover:${category.colors.text}`}
+              className={`flex h-12 items-center text-base font-medium text-hub-gray transition-colors focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech ${category.colors.hover}`}
             >
               {category.label}
             </Link>
@@ -90,7 +90,7 @@ export function Header() {
                   onClick={() => setIsMenuOpen(false)}
                   // min-h-12 = 3rem. Essencial para lista vertical em mobile.
                   // Evita "fat finger error" (tocar no link errado).
-                  className={`flex min-h-12 items-center rounded-md px-4 text-lg font-medium text-hub-gray transition-colors active:bg-hub-light hover:${category.colors.text}`}
+                  className={`flex min-h-12 items-center rounded-md px-4 text-lg font-medium text-hub-gray transition-colors active:bg-hub-light ${category.colors.hover}`}
                 >
                   {category.label}
                 </Link>
