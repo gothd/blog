@@ -6,7 +6,6 @@ interface PostCardProps {
   post: PostMetadata;
 }
 
-// Mapeamento de cores para as categorias (usando as classes do nosso Design System)
 const CATEGORY_STYLES = {
   tecnologia: 'bg-hub-tech text-white',
   saude: 'bg-hub-health text-white',
@@ -16,23 +15,27 @@ const CATEGORY_STYLES = {
 };
 
 export function PostCard({ post }: PostCardProps) {
-  // Fallback para categoria caso venha algo fora do padrão
   const categoryClass =
     CATEGORY_STYLES[post.category] || 'bg-hub-gray text-white';
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-xl border border-hub-gray/20 bg-white transition-all hover:-translate-y-1 hover:shadow-lg">
+    <article
+      // 1. Adicionado 'group' para disparar as animações dos filhos
+      // 2. Adicionado 'duration-300 ease-out' para a subida do card ser suave
+      className="group flex flex-col overflow-hidden rounded-xl border border-hub-gray/20 bg-white transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+    >
       <div className="relative aspect-video w-full overflow-hidden bg-hub-light">
         {post.image ? (
           <Image
             src={post.image}
             alt={`Capa do post: ${post.title}`}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            // 3. O scale agora funciona porque o pai tem 'group'.
+            // duration-500 para o zoom ser mais lento que a subida (efeito parallax suave)
+            className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          // Fallback se não tiver imagem definida
           <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-hub-light to-hub-gray/10 text-hub-gray/40">
             <span className="text-4xl font-bold opacity-20">RH</span>
           </div>
@@ -52,7 +55,8 @@ export function PostCard({ post }: PostCardProps) {
           <h3 className="mb-2 text-xl font-bold leading-tight text-hub-dark">
             <Link
               href={`/blog/${post.slug}`}
-              className="hover:underline focus:outline-none focus:underline"
+              // Adicionado decoration-2 para o sublinhado ficar mais visível no hover
+              className="decoration-2 hover:underline focus:outline-none focus:underline"
             >
               {post.title}
             </Link>
@@ -73,8 +77,6 @@ export function PostCard({ post }: PostCardProps) {
 
           <Link
             href={`/blog/${post.slug}`}
-            // min-h-10 (2.5rem) ou h-12 (3rem) para touch target.
-            // Aqui optei por um botão visualmente compacto mas fácil de clicar.
             className="flex min-h-10 items-center justify-center rounded-lg bg-hub-dark px-4 text-sm font-medium text-white transition-colors hover:bg-hub-dark/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech focus-visible:ring-offset-2"
             aria-label={`Ver detalhes sobre ${post.title}`}
           >
