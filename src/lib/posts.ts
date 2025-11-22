@@ -4,13 +4,19 @@ import path from 'path';
 
 export interface PostMetadata {
   title: string;
-  description: string; // SEO Description (Frontmatter)
-  excerpt: string; // UI Description (Gerado do Conteúdo)
+  description: string;
+  excerpt: string;
   date: string;
   category: 'tecnologia' | 'saude' | 'economia' | 'sociedade' | 'cultura';
   image?: string;
-  affiliateLink?: string;
+  affiliateLink?: string; // Link para COMPRAR
   price?: string;
+
+  // NOVOS CAMPOS PARA PARCEIROS
+  affiliationLink?: string; // Link para SE AFILIAR (Revender)
+  commissionRate?: string; // Ex: "50%"
+  affiliationTitle?: string; // Título personalizado do box de afiliação
+
   slug: string;
 }
 
