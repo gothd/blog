@@ -1,5 +1,6 @@
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { SITE_CONFIG } from '@/config/site';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -15,14 +16,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // Substitua pela sua URL de produção quando tiver, ou use a da Vercel temporária
-  metadataBase: new URL('https://ruan-hub.vercel.app'),
+  // 1. Base URL via Variável de Ambiente
+  metadataBase: new URL(SITE_CONFIG.url),
   title: {
     template: '%s | Ruan Hub',
     default: 'Ruan Hub - Descobertas Digitais',
   },
   description: 'Curadoria de produtos digitais, tecnologia, saúde e sociedade.',
-  // Aqui entra aquela verificação do Google depois
+  // 2. Verificação do Google via Variável de Ambiente
+  verification: {
+    google: SITE_CONFIG.googleVerification,
+  },
 };
 
 export default function RootLayout({

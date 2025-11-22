@@ -2,66 +2,71 @@
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
-![Status](https://img.shields.io/badge/status-development-yellow)
+![Status](https://img.shields.io/badge/status-production-blue)
 
-Bem-vindo ao repositório do **Ruan Hub**.
+Plataforma de **curadoria digital e blog**, desenvolvida com foco em performance (SSG), SEO técnico e Arquitetura Limpa.
 
-Este projeto é uma plataforma de **curadoria digital e blog**, desenvolvido com foco em performance e SEO para indexação de produtos de afiliação e conteúdos educativos.
+## 🎯 Propósito
 
-## 🎯 Propósito do Projeto
-
-O Ruan Hub é um espaço de descobertas digitais organizado por categorias (Saúde, Sociedade, Economia, Tecnologia, Cultura). O objetivo técnico é criar uma aplicação **JAMstack** rápida, segura e escalável que sirva como:
-
-1.  **Hub de Conteúdo:** Artigos e reviews de produtos.
-2.  **Portfólio Open-Source:** Demonstração de habilidades em React, Next.js e Arquitetura de Software.
+O Ruan Hub organiza descobertas digitais em categorias (Saúde, Sociedade, Economia, Tecnologia, Cultura), conectando criadores de conteúdo e consumidores a produtos transformadores.
 
 ## 🚀 Tech Stack
 
 - **Core:** Next.js 16 (App Router)
 - **Linguagem:** TypeScript
-- **Estilo:** Tailwind CSS
-- **Conteúdo:** MDX (Markdown gerenciável)
+- **Estilo:** Tailwind CSS v4
+- **Conteúdo:** MDX (Markdown + JSX) com `next-mdx-remote`
+- **Busca:** Fuse.js (Client-side Fuzzy Search)
 
-## 📂 Estrutura de Pastas
+## ⚙️ Configuração e Variáveis de Ambiente
 
-A arquitetura segue princípios de separação de responsabilidades para facilitar a manutenção:
+Para rodar o projeto, renomeie o arquivo `.env.example` para `.env.local` e preencha as variáveis:
 
-- `/app`: Rotas e Layouts (Next.js App Router).
-- `/components`: Interface do usuário (Cards de produto, Headers, etc).
-- `/content`: Base de dados em arquivos (Posts e Produtos).
-- `/lib`: Lógica de negócios e utilitários.
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+GOOGLE_SITE_VERIFICATION=seu_codigo_hash
+```
 
 ## 📚 Gerenciamento de Conteúdo
 
-Os posts e produtos são gerenciados via arquivos **MDX** na pasta `/src/content`.
-Não é necessário banco de dados. Basta criar um arquivo `.mdx` e ele aparecerá automaticamente no site.
+O conteúdo é gerenciado via sistema de arquivos (File System CMS) na pasta `/src/content`.
 
-### Estrutura do Frontmatter
+### 1\. Estrutura de Pastas
 
-Cada arquivo deve começar com o seguinte cabeçalho de metadados:
+Os posts devem ser organizados dentro da pasta de sua respectiva categoria:
+`/src/content/[categoria]/meu-post.mdx`
+
+### 2\. Frontmatter (Metadados)
 
 ```yaml
 ---
-title: 'Título do Produto ou Artigo'
-description: 'Descrição curta para SEO (Meta Description)'
+title: 'Título do Produto'
+description: 'Meta description para SEO (160 caracteres)'
 date: 'YYYY-MM-DD'
-category: 'tecnologia' # Opções: tecnologia, saude, economia, sociedade, cultura
-image: '/images/nome-do-arquivo.jpg' # Caminho relativo à pasta public/
-price: 'R$ 00,00' # Opcional: Exibe preço no card
-affiliateLink: 'https://...' # Opcional: Link para compra (B2C)
-
-# Campos B2B (Programa de Parceiros) - Opcionais
-affiliationLink: 'https://...' # Link para cadastro de afiliado
-commissionRate: '50%' # Taxa de comissão exibida
-affiliationTitle: 'Título personalizado para o box de parceiros'
+category: 'tecnologia' # Deve bater com a pasta e config/categories.ts
+image: '/images/capa.jpg' # Na pasta public
+price: 'R$ 97,00' # Opcional
+affiliateLink: 'https://...' # Link de Venda (B2C)
+isAuthorProduct: true # (Opcional) Ativa o Boost de visibilidade
 ---
 ```
 
-### Imagens
+### 3\. Sistema de Boost (Retenção)
 
-Coloque as imagens de capa na pasta `/public/images`.
-Recomendamos o formato **JPG** ou **WebP** com proporção **16:9** e largura mínima de **1200px** para melhor resolução em telas retina.
+Produtos marcados com `isAuthorProduct: true` recebem destaque automático no topo das listagens por **7 dias** após a data de publicação (`date`) ou atualização (`updatedAt`). A lógica respeita o fuso horário UTC-3 (Brasil).
+
+### 4\. Categorias
+
+As categorias são centralizadas em `src/config/categories.ts`. Para adicionar ou alterar uma categoria (cor, slug, descrição), edite apenas este arquivo.
+
+## 🤝 Contribuição
+
+1.  Fork o projeto.
+2.  Crie uma branch para sua feature (`git checkout -b feature/nova-feature`).
+3.  Commit suas mudanças (`git commit -m 'feat: adiciona nova feature'`).
+4.  Push para a branch (`git push origin feature/nova-feature`).
+5.  Abra um Pull Request.
 
 ---
 
-Mantido por [Gothd](https://github.com/gothd)
+Mantido por [Gothd](https://www.google.com/search?q=https://github.com/gothd)

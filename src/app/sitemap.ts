@@ -1,9 +1,10 @@
 import { CATEGORY_LIST } from '@/config/categories';
+import { SITE_CONFIG } from '@/config/site';
 import { getAllPosts } from '@/lib/posts';
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://ruan-hub.vercel.app';
+  const baseUrl = SITE_CONFIG.url; // Usa a variável de ambiente
   const allPosts = getAllPosts();
 
   // 1. URLs dos Posts (Lógica de updatedAt)
