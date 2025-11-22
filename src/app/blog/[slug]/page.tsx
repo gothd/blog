@@ -1,18 +1,18 @@
 import { MDXComponents } from '@/components/mdx/MDXComponents';
+import { CATEGORIES, CategoryId } from '@/config/categories';
 import { getAllPosts, getPostBySlug } from '@/lib/posts';
 import { Metadata } from 'next';
-import { MDXRemote } from 'next-mdx-remote/rsc'; // Importante: /rsc
+import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import remarkGfm from 'remark-gfm';
 
 interface PageProps {
-  params: Promise<{ slug: string }>; // Next.js 15+ params são Promise
+  params: Promise<{ slug: string }>;
 }
 
 // 1. Geração de Parâmetros Estáticos (SSG)
-// Isso diz ao Next.js quais páginas criar no build time (ex: /blog/pixel-art-pro)
 export async function generateStaticParams() {
   const posts = getAllPosts();
   return posts.map((post) => ({
@@ -46,7 +46,6 @@ export async function generateMetadata({
   };
 }
 
-// 3. Componente da Página
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
@@ -55,17 +54,14 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  // Cores dinâmicas para o badge baseadas na categoria
-  const categoryColors = {
-    tecnologia: 'text-hub-tech bg-hub-tech/10',
-    saude: 'text-hub-health bg-hub-health/10',
-    economia: 'text-hub-economy bg-hub-economy/10',
-    sociedade: 'text-hub-society bg-hub-society/10',
-    cultura: 'text-hub-culture bg-hub-culture/10',
-  };
+  // REFATORAÇÃO: Fonte Única da Verdade
+  // Em vez de criar um objeto 'colors' local, buscamos da config central
+  const categoryConfig = CATEGORIES[post.metadata.category as CategoryId];
 
-  const badgeClass =
-    categoryColors[post.metadata.category] || 'text-hub-gray bg-hub-gray/10';
+  // Monta as classes baseadas na config ou usa fallback seguro
+  const badgeClass = categoryConfig
+    ? `${categoryConfig.colors.text} ${categoryConfig.colors.light}`
+    : 'text-hub-gray bg-hub-gray/10';
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
@@ -92,10 +88,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Cabeçalho do Post */}
       <header className="mb-10 border-b border-hub-gray/10 pb-10">
         <div className="mb-4 flex items-center gap-3">
+          {/* Badge usando a classe dinâmica da config central */}
           <span
             className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${badgeClass}`}
           >
-            {post.metadata.category}
+            {categoryConfig ? categoryConfig.label : post.metadata.category}
           </span>
           <time className="text-sm text-hub-gray">{post.metadata.date}</time>
         </div>
@@ -111,7 +108,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               alt={post.metadata.title}
               fill
               className="object-cover"
-              priority // Carrega com prioridade máxima (LCP)
+              priority
             />
           </div>
         )}
@@ -186,7 +183,6 @@ export default async function BlogPostPage({ params }: PageProps) {
                   )}
                 </div>
 
-                {/* TÍTULO DINÂMICO OU GENÉRICO */}
                 <h4 className="text-lg font-bold text-hub-dark">
                   {post.metadata.affiliationTitle ||
                     'Você é Criador de Conteúdo?'}
@@ -209,7 +205,6 @@ export default async function BlogPostPage({ params }: PageProps) {
                 className="group flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-hub-gray/20 bg-white px-6 text-sm font-semibold text-hub-dark transition-all hover:border-hub-dark hover:bg-hub-dark hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-dark focus-visible:ring-offset-2"
               >
                 <span>Quero me Afiliar</span>
-                {/* Ícone de "Handshake" ou Seta */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
