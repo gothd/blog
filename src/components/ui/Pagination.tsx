@@ -19,6 +19,9 @@ export function Pagination({
 
   // Função para montar a URL preservando outros params se necessário (ex: filtros futuros)
   const getPageUrl = (page: number) => {
+    // Se for página 1, retorna a URL base limpa (ex: /tecnologia)
+    if (page === 1) return baseUrl;
+    // Se for outra página, adiciona o query param (ex: /tecnologia?pagina=2)
     const separator = baseUrl.includes('?') ? '&' : '?';
     return `${baseUrl}${separator}pagina=${page}`;
   };

@@ -1,3 +1,4 @@
+import { SITE_CONFIG } from '@/config/site';
 import fs from 'fs';
 import { glob } from 'glob';
 import matter from 'gray-matter';
@@ -8,7 +9,8 @@ export interface PostMetadata {
   description: string;
   excerpt: string;
   date: string;
-  updatedAt?: string; // NOVO CAMPO
+  updatedAt?: string;
+  isAuthorProduct?: boolean; // true se for produto seu
   category: string; // Agora inferido da pasta, mas mantemos no tipo
   image?: string;
   price?: string;
@@ -54,6 +56,37 @@ function getExcerpt(content: string, description: string): string {
       return true;
     }) || '';
   return stripMarkdown(firstContentParagraph) || description;
+}
+
+// Helper para obter a data atual ajustada para o Brasil (UTC-3)
+function getBrazilDate(): Date {
+  const now = new Date();
+  // Obtém o timestamp UTC atual e subtrai 3 horas (3 * 60 * 60 * 1000 ms)
+  const brazilOffset = 3 * 60 * 60 * 1000;
+  return new Date(now.getTime() - brazilOffset);
+}
+
+// Função auxiliar para verificar se o post está no período de "Boost"
+function isBoosted(post: PostMetadata): boolean {
+  // 1. Só impulsiona se for produto do autor
+  if (!post.isAuthorProduct) return false;
+
+  // 2. Data do post (assumida como UTC midnight pela string YYYY-MM-DD)
+  const lastActiveDate = new Date(post.updatedAt || post.date);
+
+  // 3. Data atual ajustada para o Brasil
+  const nowBR = getBrazilDate();
+
+  // 4. Calcula a diferença em milissegundos
+  const diffTime = nowBR.getTime() - lastActiveDate.getTime();
+
+  // 5. Converte para dias (arredondando para cima para contar dias parciais como 1 dia)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  // Debug (Opcional: descomente para ver nos logs da Vercel)
+  // console.log(`Post: ${post.title}, Dias: ${diffDays}, Boosted: ${diffDays <= SITE_CONFIG.promotionWindowDays}`);
+
+  return diffDays >= 0 && diffDays <= SITE_CONFIG.promotionWindowDays;
 }
 
 // ==========================================================
@@ -111,10 +144,22 @@ export function getAllPosts(category?: string): PostMetadata[] {
     } as PostMetadata;
   });
 
-  // Ordena por updatedAt (se houver) ou date
+  // NOVA LÓGICA DE ORDENAÇÃO (Weighted Sort)
   return allPostsData.sort((a, b) => {
-    const dateA = a.updatedAt || a.date;
-    const dateB = b.updatedAt || b.date;
-    return dateA < dateB ? 1 : -1;
+    const aBoosted = isBoosted(a);
+    const bBoosted = isBoosted(b);
+
+    // Regra 1: Se A é impulsionado e B não, A vem primeiro (retorna -1)
+    if (aBoosted && !bBoosted) return -1;
+
+    // Regra 2: Se B é impulsionado e A não, B vem primeiro (retorna 1)
+    if (!aBoosted && bBoosted) return 1;
+
+    // Regra 3: Se ambos são impulsionados OU ambos são normais,
+    // o desempate é a data mais recente (updatedAt ou date)
+    const dateA = new Date(a.updatedAt || a.date).getTime();
+    const dateB = new Date(b.updatedAt || b.date).getTime();
+
+    return dateB - dateA; // Ordem decrescente (mais novo primeiro)
   });
 }
