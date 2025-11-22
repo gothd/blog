@@ -1,4 +1,5 @@
 import { PostMetadata } from '@/lib/posts';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface PostCardProps {
@@ -21,21 +22,25 @@ export function PostCard({ post }: PostCardProps) {
 
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-hub-gray/20 bg-white transition-all hover:-translate-y-1 hover:shadow-lg">
-      {/* Área da Imagem (Placeholder por enquanto se não tiver imagem) */}
-      <div className="aspect-video w-full bg-hub-light relative">
+      <div className="relative aspect-video w-full overflow-hidden bg-hub-light">
         {post.image ? (
-          // Aqui usaríamos o componente Image do Next.js no futuro
-          <div className="h-full w-full object-cover bg-hub-gray/10 flex items-center justify-center text-hub-gray/50">
-            {/* Simulação de Imagem */}
-            <span className="text-sm">Capa do Produto</span>
-          </div>
+          <Image
+            src={post.image}
+            alt={`Capa do post: ${post.title}`}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         ) : (
-          <div className="h-full w-full bg-linear-to-br from-hub-light to-hub-gray/20" />
+          // Fallback se não tiver imagem definida
+          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-hub-light to-hub-gray/10 text-hub-gray/40">
+            <span className="text-4xl font-bold opacity-20">RH</span>
+          </div>
         )}
 
         {/* Badge de Categoria */}
         <span
-          className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${categoryClass}`}
+          className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider shadow-sm ${categoryClass}`}
         >
           {post.category}
         </span>

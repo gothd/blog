@@ -31,6 +31,37 @@ A arquitetura segue princípios de separação de responsabilidades para facilit
 - `/content`: Base de dados em arquivos (Posts e Produtos).
 - `/lib`: Lógica de negócios e utilitários.
 
+## 📚 Gerenciamento de Conteúdo
+
+Os posts e produtos são gerenciados via arquivos **MDX** na pasta `/src/content`.
+Não é necessário banco de dados. Basta criar um arquivo `.mdx` e ele aparecerá automaticamente no site.
+
+### Estrutura do Frontmatter
+
+Cada arquivo deve começar com o seguinte cabeçalho de metadados:
+
+```yaml
+---
+title: 'Título do Produto ou Artigo'
+description: 'Descrição curta para SEO (Meta Description)'
+date: 'YYYY-MM-DD'
+category: 'tecnologia' # Opções: tecnologia, saude, economia, sociedade, cultura
+image: '/images/nome-do-arquivo.jpg' # Caminho relativo à pasta public/
+price: 'R$ 00,00' # Opcional: Exibe preço no card
+affiliateLink: 'https://...' # Opcional: Link para compra (B2C)
+
+# Campos B2B (Programa de Parceiros) - Opcionais
+affiliationLink: 'https://...' # Link para cadastro de afiliado
+commissionRate: '50%' # Taxa de comissão exibida
+affiliationTitle: 'Título personalizado para o box de parceiros'
+---
+```
+
+### Imagens
+
+Coloque as imagens de capa na pasta `/public/images`.
+Recomendamos o formato **JPG** ou **WebP** com proporção **16:9** e largura mínima de **1200px** para melhor resolução em telas retina.
+
 ---
 
 Mantido por [Gothd](https://github.com/gothd)

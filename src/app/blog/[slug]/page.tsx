@@ -2,6 +2,7 @@ import { MDXComponents } from '@/components/mdx/MDXComponents';
 import { getAllPosts, getPostBySlug } from '@/lib/posts';
 import { Metadata } from 'next';
 import { MDXRemote } from 'next-mdx-remote/rsc'; // Importante: /rsc
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import remarkGfm from 'remark-gfm';
@@ -40,7 +41,7 @@ export async function generateMetadata({
       description: post.metadata.description,
       type: 'article',
       publishedTime: post.metadata.date,
-      // images: [post.metadata.image], // Futuramente
+      images: post.metadata.image ? [post.metadata.image] : [],
     },
   };
 }
@@ -103,6 +104,18 @@ export default async function BlogPostPage({ params }: PageProps) {
           {post.metadata.title}
         </h1>
 
+        {post.metadata.image && (
+          <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-2xl shadow-sm border border-hub-gray/10">
+            <Image
+              src={post.metadata.image}
+              alt={post.metadata.title}
+              fill
+              className="object-cover"
+              priority // Carrega com prioridade máxima (LCP)
+            />
+          </div>
+        )}
+
         <p className="text-xl leading-relaxed text-hub-gray">
           {post.metadata.description}
         </p>
@@ -151,7 +164,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
 
             <p className="mt-4 text-xs text-hub-gray/60">
-              * Compra segura e entrega imediata.
+              * Compra segura. Ao comprar através deste link, você apoia o Ruan
+              Hub a continuar criando conteúdo gratuito.
             </p>
           </div>
         )}

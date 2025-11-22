@@ -15,6 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Substitua pela sua URL de produção quando tiver, ou use a da Vercel temporária
+  metadataBase: new URL('https://ruan-hub.vercel.app'),
   title: {
     template: '%s | Ruan Hub',
     default: 'Ruan Hub - Descobertas Digitais',
