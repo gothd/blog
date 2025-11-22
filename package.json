@@ -1,7 +1,18 @@
 {
   "name": "blog",
   "version": "0.1.0",
-  "private": true,
+  "description": "Ruan Hub — Espaço de descobertas digitais, curadoria de produtos e conteúdos sobre saúde, sociedade, economia e tecnologia.",
+  "private": false,
+  "author": "Ruan Oliveira Sena <https://github.com/gothd>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gothd/blog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gothd/blog/issues"
+  },
+  "homepage": "https://github.com/gothd/blog#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

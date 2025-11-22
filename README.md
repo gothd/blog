@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ruan Hub
 
-## Getting Started
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![Status](https://img.shields.io/badge/status-development-yellow)
 
-First, run the development server:
+Bem-vindo ao repositório do **Ruan Hub**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Este projeto é uma plataforma de **curadoria digital e blog**, desenvolvido com foco em performance e SEO para indexação de produtos de afiliação e conteúdos educativos.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Propósito do Projeto
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O Ruan Hub é um espaço de descobertas digitais organizado por categorias (Saúde, Sociedade, Economia, Tecnologia, Cultura). O objetivo técnico é criar uma aplicação **JAMstack** rápida, segura e escalável que sirva como:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Hub de Conteúdo:** Artigos e reviews de produtos.
+2.  **Portfólio Open-Source:** Demonstração de habilidades em React, Next.js e Arquitetura de Software.
 
-## Learn More
+## 🚀 Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Core:** Next.js 16 (App Router)
+- **Linguagem:** TypeScript
+- **Estilo:** Tailwind CSS
+- **Conteúdo:** MDX (Markdown gerenciável)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📂 Estrutura de Pastas
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+A arquitetura segue princípios de separação de responsabilidades para facilitar a manutenção:
 
-## Deploy on Vercel
+- `/app`: Rotas e Layouts (Next.js App Router).
+- `/components`: Interface do usuário (Cards de produto, Headers, etc).
+- `/content`: Base de dados em arquivos (Posts e Produtos).
+- `/lib`: Lógica de negócios e utilitários.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Mantido por [Gothd](https://github.com/gothd)
