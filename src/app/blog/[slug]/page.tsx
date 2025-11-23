@@ -133,19 +133,22 @@ export default async function BlogPostPage({ params }: PageProps) {
         />
       </div>
 
-      {/* Botões de Compartilhamento Social */}
+      {/* 1. BARRA DE COMPARTILHAMENTO */}
       <SocialShare title={post.metadata.title} slug={post.metadata.slug} />
 
-      {/* ÁREA DE PRODUTO E AFILIAÇÃO */}
+      {/* 2. ÁREA DE CTAs (Venda/Afiliação) */}
       <div className="mt-16 space-y-8">
         {/* 1. CTA PARA O CLIENTE FINAL (COMPRAR) */}
         {post.metadata.affiliateLink && (
           <div className="rounded-2xl bg-hub-light p-8 text-center shadow-sm border border-hub-gray/10 md:p-12">
+            {/* Foco em progresso */}
             <h3 className="mb-2 text-2xl font-bold text-hub-dark">
-              Gostou do conteúdo?
+              Pronto para ir além?
             </h3>
-            <p className="mb-6 text-hub-gray">
-              Acesse o material completo e aplique esse conhecimento hoje mesmo.
+            {/* Foco em benefício do produto */}
+            <p className="mb-6 text-hub-gray text-balance mx-auto max-w-xl">
+              Não pare por aqui. Acesse o material completo e acelere seus
+              resultados hoje mesmo.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -228,7 +231,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Widget de Feedback Híbrido */}
+      {/* 3. WIDGET DE FEEDBACK */}
       <FeedbackWidget slug={post.metadata.slug} />
     </article>
   );
