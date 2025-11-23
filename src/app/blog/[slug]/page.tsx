@@ -1,3 +1,4 @@
+import { FeedbackWidget } from '@/components/features/FeedbackWidget';
 import { SocialShare } from '@/components/features/SocialShare';
 import { MDXComponents } from '@/components/mdx/MDXComponents';
 import { CATEGORIES, CategoryId } from '@/config/categories';
@@ -226,6 +227,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         )}
       </div>
+
+      {/* Widget de Feedback Híbrido */}
+      <FeedbackWidget slug={post.metadata.slug} />
     </article>
   );
 }

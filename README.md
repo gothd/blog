@@ -25,6 +25,10 @@ Para rodar o projeto, renomeie o arquivo `.env.example` para `.env.local` e pree
 ```bash
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 GOOGLE_SITE_VERIFICATION=seu_codigo_hash
+# Novas variáveis para o sistema de Feedback:
+REDIS_URL=sua_string_de_conexao_redis_(vercel_kv_ou_upstash)
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=sua_chave_publica_do_recaptcha_v3
+RECAPTCHA_SECRET_KEY=sua_chave_secreta_do_recaptcha_v3
 ```
 
 ## 📚 Gerenciamento de Conteúdo
@@ -58,6 +62,18 @@ Produtos marcados com `isAuthorProduct: true` recebem destaque automático no to
 ### 4\. Categorias
 
 As categorias são centralizadas em `src/config/categories.ts`. Para adicionar ou alterar uma categoria (cor, slug, descrição), edite apenas este arquivo.
+
+## 🛡️ Sistema de Feedback Seguro
+
+Implementamos um widget de feedback híbrido ao final dos posts para coletar dados quantitativos (likes/dislikes) e qualitativos (mensagens privadas opcionais) de forma segura, sem exigir login.
+
+### Arquitetura de Segurança
+
+Para prevenir abusos e spam mantendo uma arquitetura Serverless limpa, adotamos uma estratégia em camadas:
+
+1.  **Frontend (UX Instantânea):** Utiliza `localStorage` para "lembrar" localmente que o usuário já votou, oferecendo feedback visual imediato e evitando cliques repetidos na interface.
+2.  **Rate Limiting no Backend (IP):** A API de votação utiliza o **Redis** para criar uma trava baseada no IP do usuário + Slug do post. Isso impede que o mesmo IP vote mais de uma vez no mesmo post em um período de **24 horas**, garantindo a integridade dos contadores mesmo que o `localStorage` seja limpo.
+3.  **Anti-Bot nas Mensagens (reCAPTCHA):** O envio de mensagens de texto opcionais é protegido pelo **Google reCAPTCHA v3** (invisível). Um token é gerado no cliente e validado no servidor pelo Google antes que a mensagem seja aceita, bloqueando submissões automatizadas.
 
 ## 🤝 Contribuição
 
