@@ -1,3 +1,4 @@
+import { SocialShare } from '@/components/features/SocialShare';
 import { MDXComponents } from '@/components/mdx/MDXComponents';
 import { CATEGORIES, CategoryId } from '@/config/categories';
 import { getAllPosts, getPostBySlug } from '@/lib/posts';
@@ -130,6 +131,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           }}
         />
       </div>
+
+      {/* Botões de Compartilhamento Social */}
+      <SocialShare title={post.metadata.title} slug={post.metadata.slug} />
 
       {/* ÁREA DE PRODUTO E AFILIAÇÃO */}
       <div className="mt-16 space-y-8">
