@@ -1,11 +1,14 @@
 'use client';
 
 import { CATEGORY_LIST } from '@/config/categories';
+import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -13,28 +16,52 @@ export function Header() {
     // h-20 = 5rem (80px na base 16) - Altura confortável para o header
     <header className="sticky top-0 z-50 w-full border-b border-hub-gray/20 bg-white/90 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-6">
-        {/* Logo */}
+        {/* Logo + Nome do Site */}
         <Link
           href="/"
           // min-h-12 = 3rem. Garante que o logo também seja um alvo de toque fácil.
-          className="flex min-h-12 items-center text-2xl font-bold tracking-tight text-hub-dark transition-opacity hover:opacity-80 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech"
+          // Adicionado 'gap-3' para separar ícone e texto
+          className="flex min-h-12 items-center gap-3 transition-opacity hover:opacity-80 focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech"
           aria-label="Ruan Hub - Ir para página inicial"
         >
-          Ruan Hub
+          {/* ÍCONE DA LOGO */}
+          <Image
+            src="/images/logo-icon.png" // Certifique-se que o arquivo está em public/images/
+            alt="" // Vazio pois o aria-label do Link já descreve a ação
+            width={32}
+            height={32}
+            className="h-8 w-8 object-contain"
+            priority // LCP: Carrega com prioridade
+            aria-hidden="true" // Esconde da leitura de tela (redundante com o texto abaixo)
+          />
+
+          <span className="text-2xl font-bold tracking-tight text-hub-dark">
+            Ruan Hub
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:gap-8">
-          {CATEGORY_LIST.map((category) => (
-            <Link
-              key={category.slug}
-              href={`/${category.slug}`}
-              // Agora a cor vem da config central
-              className={`flex h-12 items-center text-base font-medium text-hub-gray transition-colors focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech ${category.colors.hover}`}
-            >
-              {category.label}
-            </Link>
-          ))}
+          {CATEGORY_LIST.map((category) => {
+            const isActive = pathname === `/${category.slug}`;
+
+            return (
+              <Link
+                key={category.slug}
+                href={`/${category.slug}`}
+                // Lógica de cores: Se ativo, usa a cor da categoria. Se não, usa cinza com hover da cor.
+                className={`flex h-12 items-center text-base font-medium transition-colors focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech ${
+                  isActive
+                    ? category.colors.text
+                    : `text-hub-gray ${category.colors.hover}`
+                }`}
+                // Adiciona aria-current se for a página atual para leitores de tela
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {category.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -83,19 +110,28 @@ export function Header() {
         >
           {/* gap-2 = 0.5rem. Espaçamento vertical leve entre os itens */}
           <ul className="flex flex-col gap-2">
-            {CATEGORY_LIST.map((category) => (
-              <li key={category.slug}>
-                <Link
-                  href={`/${category.slug}`}
-                  onClick={() => setIsMenuOpen(false)}
-                  // min-h-12 = 3rem. Essencial para lista vertical em mobile.
-                  // Evita "fat finger error" (tocar no link errado).
-                  className={`flex min-h-12 items-center rounded-md px-4 text-lg font-medium text-hub-gray transition-colors active:bg-hub-light ${category.colors.hover}`}
-                >
-                  {category.label}
-                </Link>
-              </li>
-            ))}
+            {CATEGORY_LIST.map((category) => {
+              const isActive = pathname === `/${category.slug}`;
+
+              return (
+                <li key={category.slug}>
+                  <Link
+                    href={`/${category.slug}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    // min-h-12 = 3rem. Essencial para lista vertical em mobile.
+                    // Lógica de cores aplicada também no mobile
+                    className={`flex min-h-12 items-center rounded-md px-4 text-lg font-medium transition-colors active:bg-hub-light ${
+                      isActive
+                        ? category.colors.text
+                        : `text-hub-gray ${category.colors.hover}`
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {category.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
       )}
