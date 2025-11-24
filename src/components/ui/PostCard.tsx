@@ -45,6 +45,13 @@ export function PostCard({ post }: PostCardProps) {
         >
           {categoryConfig?.label || post.category}
         </span>
+
+        {/* Badge de Promoção sobre a imagem (Opcional) */}
+        {post.promoLabel && (
+          <span className="absolute right-4 top-4 rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
+            {post.promoLabel}
+          </span>
+        )}
       </div>
 
       {/* Conteúdo do Card */}
@@ -66,10 +73,19 @@ export function PostCard({ post }: PostCardProps) {
         <div className="mt-6 flex items-center justify-between border-t border-hub-gray/10 pt-4">
           <div className="flex flex-col">
             <span className="text-xs text-hub-gray uppercase">
-              Investimento
+              {post.price ? 'Investimento' : 'Disponibilidade'}
             </span>
-            <span className="text-lg font-bold text-hub-tech">
-              {post.price || 'Grátis'}
+            {/* LÓGICA DE PREÇO VARIÁVEL */}
+            <span
+              className={`text-lg font-bold ${
+                post.price ? 'text-hub-tech' : 'text-hub-gray'
+              }`}
+            >
+              {post.price
+                ? 'Ver Detalhes'
+                : post.affiliatePlatform
+                ? `Ver na ${post.affiliatePlatform}` // Ex: "Ver na Amazon"
+                : 'Acessar Oferta'}
             </span>
           </div>
 
@@ -78,7 +94,7 @@ export function PostCard({ post }: PostCardProps) {
             className="flex min-h-10 items-center justify-center rounded-lg bg-hub-dark px-4 text-sm font-medium text-white transition-colors hover:bg-hub-dark/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-tech focus-visible:ring-offset-2"
             aria-label={`Ver detalhes sobre ${post.title}`}
           >
-            Ver Detalhes
+            {post.price ? 'Ver Detalhes' : 'Acessar Oferta'}
           </Link>
         </div>
       </div>

@@ -10,14 +10,21 @@ export interface PostMetadata {
   excerpt: string;
   date: string;
   updatedAt?: string;
-  isAuthorProduct?: boolean; // true se for produto seu
   category: string; // Agora inferido da pasta, mas mantemos no tipo
   image?: string;
+
+  // Dados de Venda
   price?: string;
   affiliateLink?: string;
+  promoLabel?: string; // Para destaques como "43% OFF" ou "Oferta Amazon"
+  affiliatePlatform?: string; // 'Amazon', 'Shopee', 'Site Oficial', etc.
+
+  // Dados B2B
   affiliationLink?: string;
+  isAuthorProduct?: boolean; // true se for produto seu
   commissionRate?: string;
   affiliationTitle?: string;
+
   slug: string;
 }
 

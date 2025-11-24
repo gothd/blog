@@ -65,6 +65,17 @@ export default async function BlogPostPage({ params }: PageProps) {
     ? `${categoryConfig.colors.text} ${categoryConfig.colors.light}`
     : 'text-hub-gray bg-hub-gray/10';
 
+  // LÓGICA DO TEXTO DO BOTÃO
+  const platformName = post.metadata.affiliatePlatform;
+
+  let buttonText = 'Acessar Oferta'; // Fallback padrão
+
+  if (post.metadata.price) {
+    buttonText = 'Quero Acessar Agora';
+  } else if (platformName) {
+    buttonText = `Ver Preço na ${platformName}`;
+  }
+
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
       {/* Breadcrumb / Voltar */}
@@ -99,7 +110,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <time className="text-sm text-hub-gray">{post.metadata.date}</time>
         </div>
 
-        <h1 className="mb-4 text-3xl font-bold leading-tight text-hub-dark md:text-5xl lg:leading-tight">
+        <h1 className="mb-4 text-3xl font-bold leading-tight text-hub-dark md:text-5xl lg:leading-tight text-balance">
           {post.metadata.title}
         </h1>
 
@@ -115,7 +126,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         )}
 
-        <p className="text-xl leading-relaxed text-hub-gray">
+        <p className="text-xl leading-relaxed text-hub-gray text-balance">
           {post.metadata.description}
         </p>
       </header>
@@ -164,7 +175,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center rounded-xl bg-hub-tech px-8 text-base font-bold text-white shadow-lg shadow-hub-tech/20 transition-all hover:-translate-y-1 hover:bg-hub-tech/90 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hub-dark focus-visible:ring-offset-2"
               >
-                Quero Acessar Agora
+                {buttonText}
               </a>
             </div>
 

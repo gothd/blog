@@ -13,10 +13,20 @@ O Ruan Hub organiza descobertas digitais em categorias (Saúde, Sociedade, Econo
 ## 🚀 Tech Stack
 
 - **Core:** Next.js 16 (App Router)
-- **Linguagem:** TypeScript
 - **Estilo:** Tailwind CSS v4
-- **Conteúdo:** MDX (Markdown + JSX) com `next-mdx-remote`
-- **Busca:** Fuse.js (Client-side Fuzzy Search)
+- **Dados:** Redis (Vercel KV/Upstash) para persistência de feedback
+- **Segurança:** Google reCAPTCHA v3
+- **Busca:** Fuse.js
+
+## ✨ Funcionalidades
+
+- **Blog Engine:** Sistema de blog estático (SSG) com categorias dinâmicas e paginação server-side (`?pagina=X`).
+- **Busca Inteligente:** Barra de pesquisa _client-side_ com Fuse.js (Fuzzy Search) e filtros por categoria.
+- **Engajamento:**
+  - **Social Share:** Botões de compartilhamento nativos (WhatsApp, LinkedIn, X, Facebook).
+  - **Feedback Widget:** Sistema híbrido de votação (Likes) e mensagens privadas, protegido por **Redis** (Rate Limiting por IP) e **Google reCAPTCHA v3**.
+- **Monetização Flexível:** Suporte a produtos de preço fixo (Hotmart/Eduzz) e variável (Amazon/Varejo).
+- **SEO & Performance:** Otimização de imagens, _text-balance_ para tipografia, Sitemap XML automático e metadados dinâmicos.
 
 ## ⚙️ Configuração e Variáveis de Ambiente
 
@@ -40,18 +50,29 @@ O conteúdo é gerenciado via sistema de arquivos (File System CMS) na pasta `/s
 Os posts devem ser organizados dentro da pasta de sua respectiva categoria:
 `/src/content/[categoria]/meu-post.mdx`
 
-### 2\. Frontmatter (Metadados)
+### 2\. Frontmatter (Metadados do Post)
 
 ```yaml
 ---
 title: 'Título do Produto'
 description: 'Meta description para SEO (160 caracteres)'
 date: 'YYYY-MM-DD'
-category: 'tecnologia' # Deve bater com a pasta e config/categories.ts
-image: '/images/capa.jpg' # Na pasta public
-price: 'R$ 97,00' # Opcional
-affiliateLink: 'https://...' # Link de Venda (B2C)
-isAuthorProduct: true # (Opcional) Ativa o Boost de visibilidade
+updatedAt: 'YYYY-MM-DD' # (Opcional) Para reordenar e destacar updates
+category: 'tecnologia'
+image: '/images/capa.jpg'
+
+# --- Configuração de Venda (B2C) ---
+affiliateLink: 'https://...'
+price: 'R$ 97,00' # Use para infoprodutos de preço fixo
+# OU
+affiliatePlatform: 'Amazon' # Use para varejo (muda o botão para "Ver na Amazon")
+promoLabel: 'Oferta na Amazon' # Use para destacar promoções variáveis sem hardcodar preço
+
+# --- Configuração de Parceiros (B2B - Opcional) ---
+isAuthorProduct: true # Ativa o Boost de 7 dias no topo
+affiliationLink: 'https://...'
+commissionRate: '50%'
+affiliationTitle: 'Tem audiência Tech?' # Título personalizado do box
 ---
 ```
 
