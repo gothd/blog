@@ -82,7 +82,7 @@ export function PostCard({ post }: PostCardProps) {
               }`}
             >
               {post.price
-                ? 'Ver Detalhes'
+                ? post.price
                 : post.affiliatePlatform
                 ? `Ver na ${post.affiliatePlatform}` // Ex: "Ver na Amazon"
                 : 'Acessar Oferta'}
